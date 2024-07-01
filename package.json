@@ -39,6 +39,6 @@
   },
   "homepage": "https://github.com/Idiot-Alex/icon-to-logo#readme",
   "engines": {
-    "node": ">=16.14.0"
+    "node": ">=18.16.0"
   }
 }
