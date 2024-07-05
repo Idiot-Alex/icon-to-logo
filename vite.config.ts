@@ -35,7 +35,10 @@ export default defineConfig({
       ],
       dts: './auto-imports.d.ts',
     }),
-    Icons(),
+    Icons({
+      autoInstall: true,
+      compiler: 'vue3',
+    }),
   ],
   resolve: {
     alias: {

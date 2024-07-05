@@ -1,33 +1,45 @@
 <script setup lang="ts">
 import { useAppStore } from '@/stores/app.ts'
-import x from '~icons/mdi/home?raw'
+import HomeSvgContent from '~icons/mdi/home?raw'
 
 const appStore = useAppStore()
 const myCanvas = ref()
 
 onMounted(async () => {
-  console.log(typeof x)
   const canvas = myCanvas.value
   const ctx = canvas.getContext('2d')
 
+  const img = new Image()
+
   // 获取图标的 SVG 内容
-  const svgContent = x ;//`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>`
+  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.2em" height="1.2em" ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>`
+  // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>                    
+  // <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
   console.log({svgContent})
-  // 将 SVG 内容转换为 Blob
+  console.log({HomeSvgContent})
+  console.log(HomeSvgContent)
+  const unescapedData = HomeSvgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  console.log(unescapedData)
+  setTimeout(() => {
+    // 将 SVG 内容转换为 Blob
   const blob = new Blob([svgContent], { type: 'image/svg+xml' })
   // 创建 Blob URL
   const url = URL.createObjectURL(blob)
+  console.log({url})
   // 创建 Image 对象
-  const img = new Image()
   img.src = url
   img.onload = () => {
+    const iconImage = document.getElementById('iconImage');
+    iconImage.src = url;
     ctx.drawImage(img, 100, 50)
   }
+  }, 1000);
+  
 })
 </script>
 
 <template>
-  <main :data-theme="appStore.theme" class="theme-dark">
+  <main :data-theme="appStore.theme" class="theme-dark bg-line">
     <div class="navbar bg-base-100">
       <div class="flex-1">
         <a class="btn btn-ghost text-xl">daisyUI</a>
@@ -49,7 +61,8 @@ onMounted(async () => {
         </button>
       </div>
     </div>
-    <i-mdi-account />
+    <img src="" id="iconImage" />
+    <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
     <canvas ref="myCanvas" class="artboard artboard-demo">
     </canvas>
 
