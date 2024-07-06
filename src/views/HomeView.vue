@@ -1,5 +1,11 @@
 <script setup lang="ts">
-import * as fabric from 'fabric'
+import { 
+  Canvas, 
+  Text, 
+  Rect,
+  loadSVGFromString, 
+  util 
+} from 'fabric'
 import { useAppStore } from '@/stores/app.ts'
 import HomeSvgContent from '~icons/mdi/home?raw'
 
@@ -7,36 +13,25 @@ const appStore = useAppStore()
 const myCanvas = ref(null)
 
 onMounted(async () => {
-  // const canvas = myCanvas.value
-  // const ctx = canvas.getContext('2d')
+  const unescapedData = HomeSvgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"')
 
-  // const img = new Image()
-
-  // // 获取图标的 SVG 内容
-  // const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1.2em" height="1.2em" ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>`
-  // // <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>                    
-  // // <svg viewBox="0 0 24 24" width="1.2em" height="1.2em" ><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
-  // const unescapedData = HomeSvgContent.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-  // console.log(unescapedData)
-  //   // 将 SVG 内容转换为 Blob
-  // const blob = new Blob([unescapedData], { type: 'image/svg+xml' })
-  // // 创建 Blob URL
-  // const url = URL.createObjectURL(blob)
-  // // 创建 Image 对象
-  // img.src = url
-  // img.onload = () => {
-  //   ctx.drawImage(img, 100, 50)
-  // }
-
-  const fabricCanvas = new fabric.Canvas(myCanvas.value, {width: 600, height: 400});
-  const text = new fabric.Text('fabric.js', { fill: 'blue', fontSize: 24 });
-  const rect = new fabric.Rect({
+  const fabricCanvas = new Canvas(myCanvas.value, {width: 600, height: 400});
+  const text = new Text('fabric.js', { fill: 'blue', fontSize: 24 });
+  const rect = new Rect({
     top: 100,
     left: 100,
     width: 20,
     height: 20,
     fill: 'red',
   });
+  
+  const loader: any = await loadSVGFromString(unescapedData)
+  console.log({loader})
+  const svg = util.groupSVGElements(loader.objects, loader.options);
+  fabricCanvas.add(svg);
+  fabricCanvas.centerObject(svg);
+  fabricCanvas.renderAll();
+
   fabricCanvas.add(rect)
   fabricCanvas.add(text)
 })
@@ -44,30 +39,9 @@ onMounted(async () => {
 
 <template>
   <main :data-theme="appStore.theme" class="theme-dark bg-line" h-100vh>
-    <div class="navbar bg-base-100">
-      <div class="flex-1">
-        <a class="btn btn-ghost text-xl">daisyUI</a>
-      </div>
-      <div class="flex-none">
-        <ToggleDark/>
-        <button class="btn btn-square btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            class="inline-block h-5 w-5 stroke-current">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
+    <Header />
     <div class="artboard artboard-demo">
       <canvas ref="myCanvas"></canvas>
     </div>
-
   </main>
 </template>
